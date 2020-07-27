@@ -25,11 +25,7 @@ def direct_global_separation(video):
 
     ret, frame = video.read()
     lmax = np.copy(frame)
-    lmax_g = cv2.cvtColor(lmax, cv2.COLOR_BGR2GRAY)
     lmin = np.copy(frame)
-    lmin_g = cv2.cvtColor(lmin, cv2.COLOR_BGR2GRAY)
-
-    print(len(lmax_g), len(lmax_g[0]))
 
     frames_counter = 1
 
@@ -37,46 +33,26 @@ def direct_global_separation(video):
         ret, frame = video.read()
         frames_counter = frames_counter + 1
         if ret:
-            frame_g = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            #for color_channel in range(0,3):
-            for x in range(len(frame_g)):
-                for y in range(len(frame_g[0])):
-                    if frame_g[x][y] > lmax_g[x][y]:
-                        lmax_g[x][y] = frame_g[x][y]
-                    elif frame_g[x][y] < lmin_g[x][y]:
-                        lmin_g[x][y] = frame_g[x][y]
+            for color_channel in range(0,3):
+                for x in range(len(frame)):
+                    for y in range(len(frame[0])):
+                        if frame[x][y][color_channel] > lmax[x][y][color_channel]:
+                            lmax[x][y][color_channel] = frame[x][y][color_channel]
+                        elif frame[x][y][color_channel] < lmin[x][y][color_channel]:
+                            lmin[x][y][color_channel] = frame[x][y][color_channel]
         else:
             break
-        '''
-        cv2.imshow('frame', frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
-        '''
 
-    # Calculate Ld and Lg from Lmax and Lmin at the end
-
-    print("Number of frames in the video: ", frames_counter)
-    video.release()
-    cv2.destroyAllWindows()
-
-    cv2.imshow('max', lmax_g)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-    cv2.imshow('min', lmin_g)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
-    cv2.imwrite('max gray.png',  lmax_g)
-    cv2.imwrite('min gray.png', lmin_g)
-    # Lmax = Ld + Lg
-    # Lmin = Lg
     # Lmax = Ld +βLg
     # Lmin = βLg
     # α = 1
 
-    # How to calculate max brightness for rgb image
+    beta = 0.5
+    lg = lmin / beta
+    ld = lmax - ( beta * lg )
 
+    cv2.imwrite('05direct.png', ld)
+    cv2.imwrite('05global.png', lg)
 
 if __name__ == '__main__':
     main()

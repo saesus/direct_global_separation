@@ -12,3 +12,8 @@ def get_minmax(frame, lmax, lmin, lmax_g, lmin_g):
 
 
     return lmax, lmin
+
+def display_image(image):
+    cv2.imshow('Image', image)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
