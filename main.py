@@ -1,7 +1,8 @@
-from PIL import Image
+# from PIL import Image
 import numpy as np
 import cv2
-import time
+# import time
+import sys
 
 videos = []
 
@@ -13,15 +14,14 @@ def main():
 
 def load_videos():
     global videos
-    # videos.append(cv2.VideoCapture('Curtain.mpg'))
+    videos.append(cv2.VideoCapture('Curtain.mpg'))
     videos.append(cv2.VideoCapture('Nook.mpg'))
     videos.append(cv2.VideoCapture('Red_Leaves.mpg'))
     videos.append(cv2.VideoCapture('ShowerCurtain.mpg'))
 
 
 def direct_global_separation2(video):
-    start_time = time.time()
-    count = 0
+    # start_time = time.time()
     w = int(video.get(3))
     h = int(video.get(4))
 
@@ -47,15 +47,18 @@ def direct_global_separation2(video):
     # Lmin = βLg
     # α = 1
 
-    beta = 0.5
+    beta = 0.75
     lg = lmin / beta
     ld = lmax - ( beta * lg )
 
-    cv2.imwrite('05direct2.png', ld)
-    cv2.imwrite('05global2.png', lg)
+    cv2.imwrite('05direct.png', ld)
+    cv2.imwrite('05global.png', lg)
 
-    end_time = time.time()
-    print('runtime:', end_time - start_time)
+    # end_time = time.time()
+
 
 if __name__ == '__main__':
+    print(f'Arguments count: {len(sys.argv)}')
+    for i, arg in enumerate(sys.argv):
+        print(f'Argument {i:>6}: {arg}')
     main()
