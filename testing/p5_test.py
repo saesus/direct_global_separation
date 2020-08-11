@@ -14,5 +14,6 @@ def draw():
 
 	# OpenGL works but needs pyopengl
 	# Also pip installing p5 isnt updated so it needs to be manually updated from github
+	# research into vispy maybe
 
 run(mode="P3D")
