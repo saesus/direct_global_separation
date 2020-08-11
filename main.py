@@ -1,26 +1,36 @@
-# from PIL import Image
 import numpy as np
 import cv2
-# import time
+
 import sys
+import os.path
+from argparse import ArgumentParser, FileType
+
+# Deprecated imports
+# from PIL import Image
+# import time
 
 videos = []
+videos_list = []
 
 
 def main():
-    load_videos()
-    direct_global_separation2(videos[0])
+    # videos_list = ['Curtain.mpg', 'Nook.mpg', 'Red_Leaves.mpg', 'ShowerCurtain.mpg']
+    list(map(direct_global_separation, videos, videos_list))
 
 
-def load_videos():
+# Loads the videos and their names into their respective lists
+def load_videos(args):
     global videos
-    videos.append(cv2.VideoCapture('Curtain.mpg'))
-    videos.append(cv2.VideoCapture('Nook.mpg'))
-    videos.append(cv2.VideoCapture('Red_Leaves.mpg'))
-    videos.append(cv2.VideoCapture('ShowerCurtain.mpg'))
+    global videos_list
+
+    for f in args.file:
+        videos_list.append(f.name)
+    for v in videos_list:
+        videos.append(cv2.VideoCapture(v))
 
 
-def direct_global_separation2(video):
+def direct_global_separation(video, video_name):
+    print(video_name)
     # start_time = time.time()
     w = int(video.get(3))
     h = int(video.get(4))
@@ -40,6 +50,7 @@ def direct_global_separation2(video):
         else:
             break
 
+    # frames_list = frames_list[0:int(len(frames_list)/2)]
     lmax = np.maximum.reduce(frames_list)
     lmin = np.minimum.reduce(frames_list)
 
@@ -51,14 +62,26 @@ def direct_global_separation2(video):
     lg = lmin / beta
     ld = lmax - ( beta * lg )
 
-    cv2.imwrite('05direct.png', ld)
-    cv2.imwrite('05global.png', lg)
+    cv2.imwrite('images/d-' + os.path.splitext(video_name)[0] + '.png', ld)
+    cv2.imwrite('images/g-' + os.path.splitext(video_name)[0] + '.png', lg)
 
     # end_time = time.time()
 
 
+# Checks if the file exists, else errors out
+def check_file(parser, fn):
+    try:
+        open(fn, 'r')
+        videos_list.append(fn)
+    except:
+        parser.error('The file %s does not exist' % fn)
+        return 0
+
+
 if __name__ == '__main__':
-    print(f'Arguments count: {len(sys.argv)}')
-    for i, arg in enumerate(sys.argv):
-        print(f'Argument {i:>6}: {arg}')
+    parser = ArgumentParser(description='Separates direct and global lighting in a scene given an occluder')
+    parser.add_argument('file', help="input file", metavar='', type=FileType('r'), nargs='+')
+    args = parser.parse_args()
+    load_videos(args)
+
     main()
