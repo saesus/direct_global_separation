@@ -1,3 +1,5 @@
+# Testing code for whether or not GLSL works with processing
+
 from p5 import *
 
 def setup():
