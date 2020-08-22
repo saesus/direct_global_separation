@@ -5,6 +5,9 @@ from p5 import *
 from PIL import Image
 from tkinter import filedialog
 import tkinter as tk
+from utils import processing
+
+# Global Variables
 
 img = None # Declare a variable of type PImage
 dir_img = None
@@ -18,10 +21,6 @@ global video
 
 global height
 global width
-
-mouse_pos = []
-currentposf = ()
-currentposs = ()
 
 size_mult = 100
 
@@ -53,8 +52,8 @@ def setup():
     for x in range(3):
         init_frame = np.concatenate((init_frame, blank_image), axis=1)
 
-    #buttons = np.zeros((100, len(init_frame[0]), 3), np.uint8)
-    #init_frame = np.concatenate((init_frame, buttons), axis=0)
+    # buttons = np.zeros((100, len(init_frame[0]), 3), np.uint8)
+    # init_frame = np.concatenate((init_frame, buttons), axis=0)
 
     img = convert_cv2_image(init_frame, 'BGR')
     size(img.width, img.height)
@@ -90,7 +89,7 @@ def draw():
 def mouse_pressed():
     # Relighting - No Adjustment
     if mouse_x < width:
-        result = combine_images(ld, lg)
+        result = processing.combine_images(ld, lg)
         combined_image = convert_cv2_image(result.astype('uint8'), 'BGR')
         image(combined_image, (width * 3, 0),
               (width, height))
@@ -98,7 +97,7 @@ def mouse_pressed():
     elif mouse_x < (width * 2):
         red_img = np.full((len(ld), len(ld[0]), 3), (0, 0, 255), np.uint8)
         fused_img = cv2.addWeighted(ld, 0.8, red_img, 0.2, 0)
-        result = combine_images(fused_img, lg)
+        result = processing.combine_images(fused_img, lg)
         combined_image = convert_cv2_image(result.astype('uint8'), 'BGR')
         image(combined_image, (width * 3, 0),
               (width, height))
@@ -106,7 +105,7 @@ def mouse_pressed():
     else:
         red_img = np.full((len(ld), len(ld[0]), 3), (0, 0, 255), np.uint8)
         fused_img = cv2.addWeighted(lg, 0.8, red_img, 0.2, 0)
-        result = combine_images(fused_img, ld)
+        result = processing.combine_images(fused_img, ld)
         combined_image = convert_cv2_image(result.astype('uint8'), 'BGR')
         image(combined_image, (width * 3, 0),
               (width, height))
@@ -135,20 +134,6 @@ def convert_cv2_image(cv2_image, colorspace):
     temp_img = PImage(w, h)
     temp_img._img = c_image
     return temp_img
-
-
-def combine_images(img1, img2):
-    img1 = img1.astype('uint16')
-    img2 = img2.astype('uint16')
-
-    img = cv2.add(img1, img2)
-    norm_img = img.astype(np.float64) / img.max()  # normalize the data to 0 - 1
-    norm_img = 255 * norm_img # Now scale by 255
-
-    img = norm_img.astype(np.uint8)
-
-    return img
-    # return np.mean([img1, img2], axis=0)
 
 
 def direct_global_separation(video, video_name):
@@ -191,15 +176,7 @@ def direct_global_separation(video, video_name):
     lg = lmin / beta
     ld = lmax - ( beta * lg )
 
-    # cv2.imwrite('images/d-' + os.path.splitext(video_name)[0] + '.png', ld)
-    # cv2.imwrite('images/g-' + os.path.splitext(video_name)[0] + '.png', lg)
     return(ld, lg)
-
-
-def scaling_ratio(minx, maxx, miny, maxy):
-    x_scaling = ( img.width/2 ) / ( maxx - minx)
-    y_scaling = ( img.height) / (maxy - miny)
-    return min(x_scaling, y_scaling)
 
 
 def openfile():

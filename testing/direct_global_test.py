@@ -30,8 +30,6 @@ def load_videos(args):
 
 
 def direct_global_separation(video, video_name):
-    print(video_name)
-    # start_time = time.time()
     w = int(video.get(3))
     h = int(video.get(4))
 
@@ -40,17 +38,14 @@ def direct_global_separation(video, video_name):
     ret, frame = video.read()
 
     frames_list.append(frame)
-    # frames_counter = 1
 
     while ret:
         ret, frame = video.read()
-        # frames_counter = frames_counter + 1
         if ret:
             frames_list.append(frame)
         else:
             break
 
-    # frames_list = frames_list[0:int(len(frames_list)/2)]
     lmax = np.maximum.reduce(frames_list)
     lmin = np.minimum.reduce(frames_list)
 
