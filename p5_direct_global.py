@@ -25,6 +25,19 @@ frame_size = 640
 
 global gradient_height
 
+global filter_red
+global filter_green
+global filter_blue
+global filter_int
+global filter_img
+
+global red_elipse
+global green_elipse
+global blue_elipse
+global int_elipse
+
+comb = None
+
 size_mult = 1
 
 def setup():
@@ -73,10 +86,23 @@ def setup():
     dir_img = processing.convert_cv2_image(ld, 'BGR')
     glo_img = processing.convert_cv2_image(lg, 'BGR')
 
+    global red_elipse
+    global green_elipse
+    global blue_elipse
+    global int_elipse
+
+    red_elipse = None
+    green_elipse = None
+    blue_elipse = None
+    int_elipse = None
+
+    init_filter()
     no_loop()
 
 
 def draw():
+    global comb
+
     global mouse_pos
     global currentposf
     global currentposs
@@ -84,6 +110,11 @@ def draw():
     global height
     global width
     global gradient_height
+
+    global red_elipse
+    global green_elipse
+    global blue_elipse
+    global int_elipse
 
     background(img)
     image(dir_img, (width, 0),
@@ -98,38 +129,106 @@ def draw():
     image(gradients[2], (0, height + (gradient_height * 2)))
     image(gradients[3], (0, height + (gradient_height * 3)))
 
-
-def mouse_pressed():
-    # Relighting - No Adjustment
-    if mouse_y < height:
-        if mouse_x < width:
+    if comb:
+        if comb == 1:
             result = processing.combine_images(ld, lg)
             combined_image = processing.convert_cv2_image(result.astype('uint8'), 'BGR')
             image(combined_image, (width * 3, 0),
                   (width, height))
+        elif comb == 2:
+            result = processing.combine_images(generate_filtered_image(ld), lg)
+            combined_image = processing.convert_cv2_image(result.astype('uint8'), 'BGR')
+            image(combined_image, (width * 3, 0),
+                  (width, height))
+        else:
+            result = processing.combine_images(ld, generate_filtered_image(lg))
+            combined_image = processing.convert_cv2_image(result.astype('uint8'), 'BGR')
+            image(combined_image, (width * 3, 0),
+                  (width, height))
+    if red_elipse:
+        ellipse((red_elipse[0], red_elipse[1]), 25, 25)
+    if green_elipse:
+        ellipse((green_elipse[0], green_elipse[1]), 25, 25)
+    if blue_elipse:
+        ellipse((blue_elipse[0], blue_elipse[1]), 25, 25)
+    if int_elipse:
+        ellipse((int_elipse[0], int_elipse[1]), 25, 25)
+
+def mouse_pressed():
+    global comb
+
+    global filter_red
+    global filter_green
+    global filter_blue
+    global filter_int
+    global filter_img
+
+    global red_elipse
+    global green_elipse
+    global blue_elipse
+    global int_elipse
+
+    if mouse_y < height:
+        # Relighting - No Adjustment
+        if mouse_x < width:
+            comb = 1
+            draw()
         # Relighting - Red tint on direct
         elif mouse_x < (width * 2):
-            red_img = np.full((len(ld), len(ld[0]), 3), (0, 0, 255), np.uint8)
-            fused_img = cv2.addWeighted(ld, 0.8, red_img, 0.2, 0)
-            result = processing.combine_images(fused_img, lg)
-            combined_image = processing.convert_cv2_image(result.astype('uint8'), 'BGR')
-            image(combined_image, (width * 3, 0),
-                  (width, height))
+            comb = 2
+            draw()
         # Relighting - Red tint on global
         else:
-            red_img = np.full((len(ld), len(ld[0]), 3), (0, 0, 255), np.uint8)
-            fused_img = cv2.addWeighted(lg, 0.8, red_img, 0.2, 0)
-            result = processing.combine_images(fused_img, ld)
-            combined_image = processing.convert_cv2_image(result.astype('uint8'), 'BGR')
-            image(combined_image, (width * 3, 0),
-                  (width, height))
+            comb = 3
+            draw()
     else:
         # Recolor based on the gradients
         if mouse_y < height + gradient_height:
+            filter_red = 255 * (mouse_x/int(width * 4))
+            red_elipse = [mouse_x, mouse_y]
+            print(filter_red)
+            draw()
+        elif mouse_y < height + (2 * gradient_height):
+            filter_green = 255 * (mouse_x / int(width * 4))
+            green_elipse = [mouse_x, mouse_y]
+            print(filter_green)
+            draw()
+        elif mouse_y < height + (3 * gradient_height):
+            filter_blue = 255 * (mouse_x / int(width * 4))
+            blue_elipse = [mouse_x, mouse_y]
+            print(filter_blue)
+            draw()
+        elif mouse_y < height + (4 * gradient_height):
+            filter_int = mouse_x / int(width * 4)
+            int_elipse = [mouse_x, mouse_y]
+            print(filter_int)
+            draw()
 
-        if mouse_y < height + (2 * gradient_height):
-        if mouse_y < height + (3 * gradient_height):
-        if mouse_y < height + (4 * gradient_height):
+def generate_filtered_image(image):
+    global filter_red
+    global filter_green
+    global filter_blue
+    global filter_int
+    global filter_img
+
+    filter_img = np.full((len(ld), len(ld[0]), 3), (filter_red, filter_green, filter_blue), np.uint8)
+    fused_img = cv2.addWeighted(image, (1 - filter_int), filter_img, filter_int, 0)
+
+    return fused_img
+
+
+def init_filter():
+    global filter_red
+    global filter_green
+    global filter_blue
+    global filter_int
+    global filter_img
+
+    filter_red = 0
+    filter_green = 0
+    filter_blue = 0
+    filter_int = 0.2
+    filter_img = np.full((len(ld), len(ld[0]), 3), (filter_red, filter_green, filter_blue), np.uint8)
 
 
 def openfile():
