@@ -129,6 +129,7 @@ def draw():
     image(gradients[2], (0, height + (gradient_height * 2)))
     image(gradients[3], (0, height + (gradient_height * 3)))
 
+    # Combines the images for the resultant image based on user selection
     if comb:
         if comb == 1:
             result = processing.combine_images(ld, lg)
@@ -145,6 +146,8 @@ def draw():
             combined_image = processing.convert_cv2_image(result.astype('uint8'), 'BGR')
             image(combined_image, (width * 3, 0),
                   (width, height))
+
+    # Draws circles where the user has clicked on each of the gradients
     if red_elipse:
         ellipse((red_elipse[0], red_elipse[1]), 25, 25)
     if green_elipse:
@@ -199,7 +202,7 @@ def mouse_pressed():
             print(filter_blue)
             draw()
         elif mouse_y < height + (4 * gradient_height):
-            filter_int = mouse_x / int(width * 4)
+            filter_int = 1 - (mouse_x / int(width * 4))
             int_elipse = [mouse_x, mouse_y]
             print(filter_int)
             draw()
@@ -211,6 +214,7 @@ def generate_filtered_image(image):
     global filter_int
     global filter_img
 
+    # Inits a filter image with no mixing
     filter_img = np.full((len(ld), len(ld[0]), 3), (filter_red, filter_green, filter_blue), np.uint8)
     fused_img = cv2.addWeighted(image, (1 - filter_int), filter_img, filter_int, 0)
 

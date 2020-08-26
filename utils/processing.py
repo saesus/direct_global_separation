@@ -22,13 +22,6 @@ def combine_images(img1, img2):
     img = norm_img.astype(np.uint8)
 
     return img
-    # return np.mean([img1, img2], axis=0)
-
-
-def compare_images(image1, image2):
-    if np.array_equal(image1, image2):
-        return True
-    return False
 
 
 def convert_cv2_image(cv2_image, colorspace):
@@ -99,17 +92,6 @@ def direct_global_separation(video, video_name, width, height):
     return(ld, lg)
 
 
-def get_minmax(frame, lmax, lmin, lmax_g, lmin_g):
-    frame_g = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-    for x in range(len(frame_g)):
-        for y in range(len(frame_g[0])):
-            if frame_g[x][y] > lmax_g[x][y]:
-                lmax[x][y] = frame[x][y]
-            elif frame_g[x][y] < lmin_g[x][y]:
-                lmin[x][y] = frame[x][y]
-    return lmax, lmin
-
-
 def scaling_ratio(frame_size, height, width):
     """Returns a ratio to scale an image to 255 pixels
     wide/high
@@ -152,6 +134,7 @@ def generate_color(width, height):
         intensity[:,pos,0] = 255*(pos/width)
         intensity[:,pos,1] = 255*(pos/width)
         intensity[:,pos,2] = 255*(pos/width)
+
     rgb = [convert_cv2_image(r, 'BGR'), convert_cv2_image(g, 'BGR'), convert_cv2_image(b, 'BGR'), convert_cv2_image(intensity, 'BGR')]
     return rgb
 
