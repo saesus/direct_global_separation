@@ -17,7 +17,7 @@ def combine_images(img1, img2):
 
     img = cv2.add(img1, img2)
     norm_img = img.astype(np.float64) / img.max()  # normalize the data to 0 - 1
-    norm_img = 255 * norm_img # Now scale by 255
+    norm_img = 255 * norm_img  # Now scale by 255
 
     img = norm_img.astype(np.uint8)
 
@@ -87,9 +87,9 @@ def direct_global_separation(video, video_name, width, height):
 
     beta = 0.75
     lg = lmin / beta
-    ld = lmax - ( beta * lg )
+    ld = lmax - (beta * lg)
 
-    return(ld, lg)
+    return (ld, lg)
 
 
 def scaling_ratio(frame_size, height, width):
@@ -101,7 +101,7 @@ def scaling_ratio(frame_size, height, width):
     :returns: A pair of cv2 images
     :rtype: :class:`numpy.ndarray`
     """
-    return frame_size/max(height, width)
+    return frame_size / max(height, width)
 
 
 # Creates 4 Images - RGB and Tone
@@ -119,22 +119,22 @@ def generate_color(width, height):
     intensity = np.zeros((height, width, 3), np.uint8)
 
     for pos in range(width - 1):
-        r[:,pos,0] = 255*(pos/width)
-        r[:,pos,1] = 255*(pos/width)
-        r[:,pos,2] = 255
+        r[:, pos, 0] = 255 * (pos / width)
+        r[:, pos, 1] = 255 * (pos / width)
+        r[:, pos, 2] = 255
     for pos in range(width - 1):
-        g[:,pos,0] = 255*(pos/width)
-        g[:,pos,1] = 255
-        g[:,pos,2] = 255*(pos/width)
+        g[:, pos, 0] = 255 * (pos / width)
+        g[:, pos, 1] = 255
+        g[:, pos, 2] = 255 * (pos / width)
     for pos in range(width - 1):
-        b[:,pos,0] = 255
-        b[:,pos,1] = 255*(pos/width)
-        b[:,pos,2] = 255*(pos/width)
+        b[:, pos, 0] = 255
+        b[:, pos, 1] = 255 * (pos / width)
+        b[:, pos, 2] = 255 * (pos / width)
     for pos in range(width - 1):
-        intensity[:,pos,0] = 255*(pos/width)
-        intensity[:,pos,1] = 255*(pos/width)
-        intensity[:,pos,2] = 255*(pos/width)
+        intensity[:, pos, 0] = 255 * (pos / width)
+        intensity[:, pos, 1] = 255 * (pos / width)
+        intensity[:, pos, 2] = 255 * (pos / width)
 
-    rgb = [convert_cv2_image(r, 'BGR'), convert_cv2_image(g, 'BGR'), convert_cv2_image(b, 'BGR'), convert_cv2_image(intensity, 'BGR')]
+    rgb = [convert_cv2_image(r, 'BGR'), convert_cv2_image(g, 'BGR'), convert_cv2_image(b, 'BGR'),
+           convert_cv2_image(intensity, 'BGR')]
     return rgb
-

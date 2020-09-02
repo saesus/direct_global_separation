@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/direct_global_separation.iml" filepath="$PROJECT_DIR$/.idea/direct_global_separation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../image_filtering/.idea/image_filtering.iml" filepath="$PROJECT_DIR$/../image_filtering/.idea/image_filtering.iml" />
     </modules>
   </component>
 </project>

@@ -9,7 +9,7 @@ from utils import processing
 
 # Global Variables
 
-img = None # Declare a variable of type PImage
+img = None  # Declare a variable of type PImage
 dir_img = None
 glo_img = None
 
@@ -40,6 +40,7 @@ comb = None
 
 size_mult = 1
 
+
 def setup():
     global img
 
@@ -59,12 +60,12 @@ def setup():
 
     video.set(1, 1)
     ret, init_frame = video.read()
-    if(len(init_frame) or len(init_frame[0])) > frame_size:
-        size_mult = processing.scaling_ratio(frame_size, len(init_frame),len(init_frame[0]))
+    if (len(init_frame) or len(init_frame[0])) > frame_size:
+        size_mult = processing.scaling_ratio(frame_size, len(init_frame), len(init_frame[0]))
         width = int(init_frame.shape[1] * size_mult)
         height = int(init_frame.shape[0] * size_mult)
         print(width, height)
-        init_frame = cv2.resize(init_frame, (width, height), interpolation = cv2.INTER_AREA)
+        init_frame = cv2.resize(init_frame, (width, height), interpolation=cv2.INTER_AREA)
     else:
         width = int(init_frame.shape[1] * size_mult)
         height = int(init_frame.shape[0] * size_mult)
@@ -157,6 +158,7 @@ def draw():
     if int_elipse:
         ellipse((int_elipse[0], int_elipse[1]), 25, 25)
 
+
 def mouse_pressed():
     global comb
 
@@ -187,7 +189,7 @@ def mouse_pressed():
     else:
         # Recolor based on the gradients
         if mouse_y < height + gradient_height:
-            filter_red = 255 * (mouse_x/int(width * 4))
+            filter_red = 255 * (mouse_x / int(width * 4))
             red_elipse = [mouse_x, mouse_y]
             print(filter_red)
             draw()
@@ -206,6 +208,7 @@ def mouse_pressed():
             int_elipse = [mouse_x, mouse_y]
             print(filter_int)
             draw()
+
 
 def generate_filtered_image(image):
     global filter_red

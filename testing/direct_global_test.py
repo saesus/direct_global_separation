@@ -55,7 +55,7 @@ def direct_global_separation(video, video_name):
 
     beta = 0.75
     lg = lmin / beta
-    ld = lmax - ( beta * lg )
+    ld = lmax - (beta * lg)
 
     cv2.imwrite('images/d-' + os.path.splitext(video_name)[0] + '.png', ld)
     cv2.imwrite('images/g-' + os.path.splitext(video_name)[0] + '.png', lg)

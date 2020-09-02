@@ -2,12 +2,13 @@ from p5 import *
 from tkinter import filedialog
 import tkinter as tk
 
-img = None # Declare a variable of type PImage
+img = None  # Declare a variable of type PImage
 img2 = None
 
 mouse_pos = []
 currentposf = ()
 currentposs = ()
+
 
 def setup():
     file = openfile()
@@ -60,12 +61,12 @@ def draw():
         # range is 0-255
         tint(255, 0, 0, 255)
         # print((int((maxx - minx) * ratio), int((maxy - miny) * ratio)))
-        image(img2[minx:maxx, miny:maxy], (img.width/2, 0), (int((maxx - minx) * ratio), int((maxy - miny) * ratio)))
+        image(img2[minx:maxx, miny:maxy], (img.width / 2, 0), (int((maxx - minx) * ratio), int((maxy - miny) * ratio)))
 
 
 def scaling_ratio(minx, maxx, miny, maxy):
-    x_scaling = ( img.width/2 ) / ( maxx - minx)
-    y_scaling = ( img.height) / (maxy - miny)
+    x_scaling = (img.width / 2) / (maxx - minx)
+    y_scaling = (img.height) / (maxy - miny)
     return min(x_scaling, y_scaling)
 
 
